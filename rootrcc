@@ -1,0 +1,17 @@
+#!/bin/bash
+#autor: Omar.Zapata@cern.ch
+OUTPUT=$(echo $1 | sed -e 's/\.C//g' | sed -e 's/\.cxx//g' | sed -e 's/\.cpp//g')
+CXX=g++ 
+CXXFLAGS="-g"
+ROOT_LIBS="-lPyMVA -lTMVA -lTMVAGui -lRInterface"
+RCPP_CXXFLAGS=`Rscript -e "Rcpp:::CxxFlags()"`
+RINSIDE_CXXFLAGS=`Rscript -e "RInside:::CxxFlags()"`
+
+RINSIDE_LDFLAGS=`Rscript -e "RInside:::LdFlags()"`
+
+R_CFLAGS=`R CMD config --cppflags`
+R_LDFLAGS=`R CMD config --ldflags`
+
+# RINSIDE_CXXFLAGS=`echo  "cat(find.package('RInside'))" | R --vanilla --slave
+#PKG_LIBS=`Rscript -e "Rcpp:::LdFlags()"`
+$CXX $(root-config --cflags --ldflags --glibs  --libs) $CXXFLAGS $R_CFLAGS $RCPP_CXXFLAGS $RINSIDE_CXXFLAGS $R_LDFLAGS $RINSIDE_LDFLAGS $ROOT_LIBS  $1 -o $OUTPUT
